@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.res.ResourcesCompat
 import com.example.pbpkel4_tubes.databinding.ActivityAllFeatureBinding
+import com.rejowan.cutetoast.CuteToast
 import com.shashank.sony.fancytoastlib.FancyToast
 import www.sanju.motiontoast.MotionToast
 import www.sanju.motiontoast.MotionToastStyle
@@ -22,6 +23,10 @@ class AllFeatureActivity : AppCompatActivity() {
         binding.button3.setOnClickListener {
             toasting()
         }
+
+        binding.button4.setOnClickListener {
+            toasting2()
+        }
     }
 
     private fun toasting() {
@@ -34,5 +39,9 @@ class AllFeatureActivity : AppCompatActivity() {
             MotionToast.LONG_DURATION,
             ResourcesCompat.getFont(this, www.sanju.motiontoast.R.font.helvetica_regular))
 
+    }
+
+    private fun toasting2() {
+        CuteToast.ct(this, "This is a Info Toast", CuteToast.LENGTH_SHORT, CuteToast.INFO, true).show();
     }
 }
