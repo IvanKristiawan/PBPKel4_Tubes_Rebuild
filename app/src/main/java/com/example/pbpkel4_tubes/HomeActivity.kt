@@ -63,6 +63,12 @@ class HomeActivity : AppCompatActivity() {
             startActivityForResult(i, LAUNCH_ADD_ACTIVITY)
         }
 
+        val fabLibrary = findViewById<FloatingActionButton>(R.id.fab_library)
+        fabLibrary.setOnClickListener{
+            val i = Intent(this@HomeActivity, AllFeatureActivity::class.java)
+            startActivityForResult(i, LAUNCH_ADD_ACTIVITY)
+        }
+
         val rvProduk = findViewById<RecyclerView>(R.id.rv_mahasiswa)
         adapter = PaketTravelAdapter(ArrayList(), this)
         rvProduk.layoutManager = LinearLayoutManager(this)
