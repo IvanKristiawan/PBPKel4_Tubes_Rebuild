@@ -6,6 +6,7 @@ import android.content.Intent
 import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.pbpkel4_tubes.databinding.ActivityMainBinding
+//import maes.tech.intentanim.CustomIntent
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         btnRegister.setOnClickListener {
             val intent = Intent(this, Register::class.java)
             startActivity(intent)
+//            CustomIntent.customType(this, "fadein-to-fadeout")
         }
     }
 }
