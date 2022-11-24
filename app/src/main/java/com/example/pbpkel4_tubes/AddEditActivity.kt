@@ -47,11 +47,11 @@ class AddEditActivity : AppCompatActivity() {
         val btnSave = findViewById<Button>(R.id.btn_save)
         val tvTitle = findViewById<TextView>(R.id.tv_title)
         val id = intent.getStringExtra("id")
-        if(id == ""){
-            tvTitle.setText("Tambah Mahasiswa")
+        if(id == null){
+            tvTitle.setText("Tambah Paket Travel")
             btnSave.setOnClickListener { createPaketTravel() }
         } else  {
-            tvTitle.setText("Edit Mahasiswa")
+            tvTitle.setText("Edit Paket Travel")
             getPaketTravelByid(id)
 
             btnSave.setOnClickListener { updatePaketTravel(id) }
