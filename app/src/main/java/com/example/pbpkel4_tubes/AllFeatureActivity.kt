@@ -20,6 +20,11 @@ class AllFeatureActivity : AppCompatActivity() {
         binding =
             ActivityAllFeatureBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.button2.setOnClickListener {
+            val intent = Intent(this, QR::class.java)
+            startActivity(intent)
+        }
+
         binding.button3.setOnClickListener {
             toasting()
         }
