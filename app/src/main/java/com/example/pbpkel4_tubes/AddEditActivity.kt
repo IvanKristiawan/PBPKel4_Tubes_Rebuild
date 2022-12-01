@@ -134,61 +134,78 @@ class AddEditActivity : AppCompatActivity() {
     private fun createPaketTravel(){
         setLoading(true)
 
-        val mahasiswa = PaketTravel(
-            etIdPaket!!.text.toString(),
-            etNamaPaket!!.text.toString(),
-            etTujuan!!.text.toString(),
-            etAsal!!.text.toString(),
-            etHarga!!.text.toString(),
-            etJam!!.text.toString(),
-            etDurasi!!.text.toString(),
-        )
+        if(etIdPaket!!.text.toString().isEmpty()){
+            Toast.makeText(this@AddEditActivity, "Id Paket Tidak Boleh Kosong!!!", Toast.LENGTH_SHORT).show()
+        }else if (etNamaPaket!!.text.toString().isEmpty()){
+            Toast.makeText(this@AddEditActivity, "Nama Tidak Boleh Kosong!!!", Toast.LENGTH_SHORT).show()
+        }else if (etTujuan!!.text.toString().isEmpty()){
+            Toast.makeText(this@AddEditActivity, "Tujuan Tidak Boleh Kosong!!!", Toast.LENGTH_SHORT).show()
+        }else if (etAsal!!.text.toString().isEmpty()){
+            Toast.makeText(this@AddEditActivity, "Asal Tidak Boleh Kosong!!!", Toast.LENGTH_SHORT).show()
+        }else if (etHarga!!.text.toString().isEmpty()){
+            Toast.makeText(this@AddEditActivity, "Harga Tidak Boleh Kosong!!!", Toast.LENGTH_SHORT).show()
+        }else if (etJam!!.text.toString().isEmpty()){
+            Toast.makeText(this@AddEditActivity, "Jam Tidak Boleh Kosong!!!", Toast.LENGTH_SHORT).show()
+        }else if (etDurasi!!.text.toString().isEmpty()){
+            Toast.makeText(this@AddEditActivity, "Durasi Tidak Boleh Kosong!!!", Toast.LENGTH_SHORT).show()
+        }else {
+            val mahasiswa = PaketTravel(
+                etIdPaket!!.text.toString(),
+                etNamaPaket!!.text.toString(),
+                etTujuan!!.text.toString(),
+                etAsal!!.text.toString(),
+                etHarga!!.text.toString(),
+                etJam!!.text.toString(),
+                etDurasi!!.text.toString(),
+            )
 
-        val stringRequest: StringRequest =
-            object : StringRequest(Method.POST, PaketTravelApi.ADD_URL, Response.Listener { response ->
-                val gson = Gson()
-                var mahasiswa = gson.fromJson(response, PaketTravel::class.java)
-
-                if(mahasiswa != null)
-                    Toast.makeText( this@AddEditActivity, "Data berhasil ditambahkan", Toast.LENGTH_SHORT).show()
-                createPdf(mahasiswa.idPaket,mahasiswa.namaPaket,mahasiswa.tujuan,mahasiswa.asal,mahasiswa.harga,mahasiswa.jam, mahasiswa.durasi)
-                val returnIntent = Intent()
-                setResult(RESULT_OK, returnIntent)
-                finish()
-
-                setLoading(false)
-            }, Response.ErrorListener { error ->
-                setLoading(false)
-                try {
-                    val respondBody = String(error.networkResponse.data, StandardCharsets.UTF_8)
-                    val errors = JSONObject(respondBody)
-                    Toast.makeText(
-                        this@AddEditActivity, errors.getString("messsage"),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } catch (e: Exception){
-                    Toast.makeText(this@AddEditActivity, e.message, Toast.LENGTH_SHORT).show()
-                }
-            }) {
-                @Throws(AuthFailureError::class)
-                override fun getHeaders(): Map<String, String> {
-                    val headers = HashMap<String, String>()
-                    headers["Accept"] = "application/json"
-                    return headers
-                }
-
-                @Throws(AuthFailureError::class)
-                override fun getBody(): ByteArray {
+            val stringRequest: StringRequest =
+                object : StringRequest(Method.POST, PaketTravelApi.ADD_URL, Response.Listener { response ->
                     val gson = Gson()
-                    val requestBody = gson.toJson(mahasiswa)
-                    return requestBody.toByteArray(StandardCharsets.UTF_8)
-                }
+                    var mahasiswa = gson.fromJson(response, PaketTravel::class.java)
 
-                override fun getBodyContentType(): String {
-                    return "application/json"
+                    if(mahasiswa != null)
+                        Toast.makeText( this@AddEditActivity, "Data berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+                    createPdf(mahasiswa.idPaket,mahasiswa.namaPaket,mahasiswa.tujuan,mahasiswa.asal,mahasiswa.harga,mahasiswa.jam, mahasiswa.durasi)
+                    val returnIntent = Intent()
+                    setResult(RESULT_OK, returnIntent)
+                    finish()
+
+                    setLoading(false)
+                }, Response.ErrorListener { error ->
+                    setLoading(false)
+                    try {
+                        val respondBody = String(error.networkResponse.data, StandardCharsets.UTF_8)
+                        val errors = JSONObject(respondBody)
+                        Toast.makeText(
+                            this@AddEditActivity, errors.getString("messsage"),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } catch (e: Exception){
+                        Toast.makeText(this@AddEditActivity, e.message, Toast.LENGTH_SHORT).show()
+                    }
+                }) {
+                    @Throws(AuthFailureError::class)
+                    override fun getHeaders(): Map<String, String> {
+                        val headers = HashMap<String, String>()
+                        headers["Accept"] = "application/json"
+                        return headers
+                    }
+
+                    @Throws(AuthFailureError::class)
+                    override fun getBody(): ByteArray {
+                        val gson = Gson()
+                        val requestBody = gson.toJson(mahasiswa)
+                        return requestBody.toByteArray(StandardCharsets.UTF_8)
+                    }
+
+                    override fun getBodyContentType(): String {
+                        return "application/json"
+                    }
                 }
-            }
-        queue!!.add(stringRequest)
+            queue!!.add(stringRequest)
+        }
+        setLoading(false)
     }
 
     private fun updatePaketTravel(id:String?){
