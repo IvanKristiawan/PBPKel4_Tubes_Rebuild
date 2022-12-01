@@ -16,6 +16,8 @@ import com.example.pbpkel4_tubes.models.User
 import com.google.gson.Gson
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
+import java.util.regex.Pattern
+import java.util.regex.Pattern.compile
 
 class Register : AppCompatActivity() {
     private var etUsername: EditText? = null
@@ -32,6 +34,7 @@ class Register : AppCompatActivity() {
         etUsername = findViewById(R.id.txt_username)
         etEmail = findViewById(R.id.txt_email)
         etPassword = findViewById(R.id.txt_password)
+        layoutLoading = findViewById(R.id.layout_loading)
 
         val btnSave = findViewById<Button>(R.id.btnRegister)
         btnSave.setOnClickListener { createUser() }
@@ -39,54 +42,91 @@ class Register : AppCompatActivity() {
 
     private fun createUser(){
 
-        val mahasiswa = User(
-            etUsername!!.text.toString(),
-            etEmail!!.text.toString(),
-            etPassword!!.text.toString(),
-        )
 
-        val stringRequest: StringRequest =
-            object : StringRequest(Method.POST, UserApi.ADD_URL, Response.Listener { response ->
-                val gson = Gson()
-                var mahasiswa = gson.fromJson(response, User::class.java)
+        setLoading(true)
+        if (isEmailValid(etEmail!!.text.toString()) == false)
+        {
+            Toast.makeText(this@Register, "Email Harus Format Email!", Toast.LENGTH_SHORT).show()
+        }
+        else if(etEmail!!.text.toString().isEmpty()) {
+            Toast.makeText(this@Register, "Email tidak boleh kosong!", Toast.LENGTH_SHORT).show()
+        }
+        else if(etPassword!!.text.toString().isEmpty()) {
+            Toast.makeText(this@Register, "Password tidak boleh kosong!", Toast.LENGTH_SHORT).show()
+        }
+        else if(etUsername!!.text.toString().isEmpty()) {
+            Toast.makeText(this@Register, "Username tidak boleh kosong!", Toast.LENGTH_SHORT).show()
+        }
+        else{
+            val mahasiswa = User(
+                etUsername!!.text.toString(),
+                etEmail!!.text.toString(),
+                etPassword!!.text.toString(),
+            )
 
-                if(mahasiswa != null)
-                    Toast.makeText( this@Register, "Data berhasil ditambahkan", Toast.LENGTH_SHORT).show()
-
-                val returnIntent = Intent()
-                setResult(RESULT_OK, returnIntent)
-                finish()
-
-            }, Response.ErrorListener { error ->
-                try {
-                    val respondBody = String(error.networkResponse.data, StandardCharsets.UTF_8)
-                    val errors = JSONObject(respondBody)
-                    Toast.makeText(
-                        this@Register, errors.getString("messsage"),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } catch (e: Exception){
-                    Toast.makeText(this@Register, e.message, Toast.LENGTH_SHORT).show()
-                }
-            }) {
-                @Throws(AuthFailureError::class)
-                override fun getHeaders(): Map<String, String> {
-                    val headers = HashMap<String, String>()
-                    headers["Accept"] = "application/json"
-                    return headers
-                }
-
-                @Throws(AuthFailureError::class)
-                override fun getBody(): ByteArray {
+            val stringRequest: StringRequest =
+                object : StringRequest(Method.POST, UserApi.ADD_URL, Response.Listener { response ->
                     val gson = Gson()
-                    val requestBody = gson.toJson(mahasiswa)
-                    return requestBody.toByteArray(StandardCharsets.UTF_8)
-                }
+                    var mahasiswa = gson.fromJson(response, User::class.java)
 
-                override fun getBodyContentType(): String {
-                    return "application/json"
+                    if(mahasiswa != null)
+                        Toast.makeText( this@Register, "Data berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+
+                    val returnIntent = Intent()
+                    setResult(RESULT_OK, returnIntent)
+                    finish()
+                    setLoading(false)
+                }, Response.ErrorListener { error ->
+                    setLoading(false)
+                    try {
+                        val respondBody = String(error.networkResponse.data, StandardCharsets.UTF_8)
+                        val errors = JSONObject(respondBody)
+                        Toast.makeText(
+                            this@Register, errors.getString("messsage"),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } catch (e: Exception){
+                        Toast.makeText(this@Register, e.message, Toast.LENGTH_SHORT).show()
+                    }
+                }) {
+                    @Throws(AuthFailureError::class)
+                    override fun getHeaders(): Map<String, String> {
+                        val headers = HashMap<String, String>()
+                        headers["Accept"] = "application/json"
+                        return headers
+                    }
+
+                    @Throws(AuthFailureError::class)
+                    override fun getBody(): ByteArray {
+                        val gson = Gson()
+                        val requestBody = gson.toJson(mahasiswa)
+                        return requestBody.toByteArray(StandardCharsets.UTF_8)
+                    }
+
+                    override fun getBodyContentType(): String {
+                        return "application/json"
+                    }
                 }
-            }
-        queue!!.add(stringRequest)
+            queue!!.add(stringRequest)
+        }
+        setLoading(false)
+    }
+
+
+    private fun setLoading(isLoading: Boolean) {
+        if (isLoading) {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
+            layoutLoading!!.visibility = View.VISIBLE
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            layoutLoading!!.visibility = View.INVISIBLE
+        }
+    }
+
+    fun isEmailValid(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }
