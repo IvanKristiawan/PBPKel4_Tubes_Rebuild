@@ -4,6 +4,8 @@ package com.example.pbpkel4_tubes
 import android.view.View
 import android.view.ViewGroup
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.*
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -46,6 +48,7 @@ class AddEditActivityTest {
             )
         )
         materialButton.perform(click())
+        onView(isRoot()).perform(waitFor(3000))
 
         val textInputEditText = onView(
             allOf(
@@ -110,6 +113,7 @@ class AddEditActivityTest {
             )
         )
         materialButton3.perform(click())
+        onView(isRoot()).perform(waitFor(3000))
 
         val textInputEditText3 = onView(
             allOf(
@@ -142,6 +146,7 @@ class AddEditActivityTest {
             )
         )
         materialButton4.perform(click())
+        onView(isRoot()).perform(waitFor(3000))
 
         val textInputEditText4 = onView(
             allOf(
@@ -174,6 +179,7 @@ class AddEditActivityTest {
             )
         )
         materialButton5.perform(click())
+        onView(isRoot()).perform(waitFor(3000))
 
         val textInputEditText5 = onView(
             allOf(
@@ -206,6 +212,7 @@ class AddEditActivityTest {
             )
         )
         materialButton6.perform(click())
+        onView(isRoot()).perform(waitFor(3000))
 
         val textInputEditText6 = onView(
             allOf(
@@ -266,6 +273,7 @@ class AddEditActivityTest {
             )
         )
         materialButton7.perform(click())
+        onView(isRoot()).perform(waitFor(3000))
 
         val textInputEditText9 = onView(
             allOf(
@@ -298,6 +306,7 @@ class AddEditActivityTest {
             )
         )
         materialButton8.perform(click())
+        onView(isRoot()).perform(waitFor(3000))
     }
 
     private fun childAtPosition(
@@ -314,6 +323,21 @@ class AddEditActivityTest {
                 val parent = view.parent
                 return parent is ViewGroup && parentMatcher.matches(parent)
                         && view == parent.getChildAt(position)
+            }
+        }
+    }
+    fun waitFor(delay: Long): ViewAction? {
+        return object : ViewAction {
+            override fun getConstraints(): Matcher<View> {
+                return isRoot()
+            }
+
+            override fun getDescription(): String {
+                return "Wait for $delay milliseconds."
+            }
+
+            override fun perform(uiController: UiController, view: View) {
+                uiController.loopMainThreadForAtLeast(delay)
             }
         }
     }
