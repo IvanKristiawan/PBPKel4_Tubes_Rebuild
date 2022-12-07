@@ -42,6 +42,11 @@ class AllFeatureActivity : AppCompatActivity() {
             val intent = Intent(this,CameraHardware::class.java)
             startActivity(intent)
         }
+
+        binding.button7.setOnClickListener{
+            val intent = Intent(this,GeoLocation::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun toasting() {

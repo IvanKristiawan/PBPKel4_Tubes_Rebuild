@@ -24,7 +24,7 @@ class GeoLocation : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.location_view)
 
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
 
