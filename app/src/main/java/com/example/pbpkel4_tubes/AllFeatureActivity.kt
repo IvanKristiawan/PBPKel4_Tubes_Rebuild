@@ -37,6 +37,11 @@ class AllFeatureActivity : AppCompatActivity() {
             val intent = Intent(this, TextRecognitionActivity2::class.java)
             startActivity(intent)
         }
+
+        binding.button6.setOnClickListener{
+            val intent = Intent(this,CameraHardware::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun toasting() {

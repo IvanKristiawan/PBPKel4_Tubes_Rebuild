@@ -23,14 +23,20 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
+import android.hardware.*
+import www.sanju.motiontoast.MotionToast
+import www.sanju.motiontoast.MotionToastStyle
+import androidx.core.content.res.ResourcesCompat
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(),SensorEventListener {
 
     private var srMahasiswa: SwipeRefreshLayout? = null
     private var adapter: PaketTravelAdapter? = null
     private var svMahasiswa: SearchView? = null
     private var layoutLoading: LinearLayout? = null
     private var queue: RequestQueue? = null
+    lateinit var proximitySensor: Sensor
+    lateinit var sensorManager: SensorManager
 
     companion object{
         const val LAUNCH_ADD_ACTIVITY = 123
@@ -80,6 +86,17 @@ class HomeActivity : AppCompatActivity() {
         rvProduk.layoutManager = LinearLayoutManager(this)
         rvProduk.adapter = adapter
         allPaketTravel()
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+        sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.also(
+            { accelerometer ->
+                sensorManager.registerListener(
+                    this,
+                    accelerometer,
+                    SensorManager.SENSOR_DELAY_FASTEST,
+                    SensorManager.SENSOR_DELAY_FASTEST
+                )
+            })
     }
 
     private fun allPaketTravel(){
@@ -176,5 +193,29 @@ class HomeActivity : AppCompatActivity() {
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             layoutLoading!!.visibility = View.GONE
         }
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
+            if(event.values[0] > 15 || event.values[1] > 15 || event.values[2] > 15){
+                toasting()
+            }
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        return
+    }
+
+    private fun toasting() {
+//        FancyToast.makeText(this,"Hello World !",FancyToast.LENGTH_LONG,FancyToast.DEFAULT,true);
+        MotionToast.createToast(this,
+            "WKWKWKWK 😍",
+            "Jangan Iseng Goyang Goyang boss!",
+            MotionToastStyle.SUCCESS,
+            MotionToast.GRAVITY_CENTER,
+            MotionToast.LONG_DURATION,
+            ResourcesCompat.getFont(this, www.sanju.motiontoast.R.font.helvetica_regular))
+
     }
 }
